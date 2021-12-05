@@ -9,10 +9,9 @@ def run(args):
     solution_cls = getattr(solution_module, "Solution")
     solution = solution_cls()
     solution_input = solution.load_data(input)
-    if hasattr(solution, "part1"):
-        print(solution.part1(solution_input))
-    if hasattr(solution, "part2"):
-        print(solution.part2(solution_input))
+    print(solution.part1(solution_input))
+    solution_input = solution.load_data(input)
+    print(solution.part2(solution_input))
 
 
 if __name__ == "__main__":
