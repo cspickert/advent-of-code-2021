@@ -1,3 +1,5 @@
+from functools import cache
+
 from base import BaseSolution
 
 
@@ -9,16 +11,19 @@ class Solution(BaseSolution):
         return self.simulate(data, 80)
 
     def part2(self, data):
-        # return self.simulate(data, 256)
-        pass
+        return self.simulate(data, 256)
 
     def simulate(self, data, days):
-        for _ in range(days):
-            next_data = []
-            for i in range(len(data)):
-                if data[i] > 0:
-                    next_data.append(data[i] - 1)
-                else:
-                    next_data.extend((6, 8))
-            data = next_data
-        return len(data)
+        return len(data) + sum(self.simulate_helper(value, days) for value in data)
+
+    @cache
+    def simulate_helper(self, value, days):
+        if days == 0:
+            return 0
+        if value == 0:
+            return (
+                1
+                + self.simulate_helper(6, days - 1)
+                + self.simulate_helper(8, days - 1)
+            )
+        return self.simulate_helper(value - 1, days - 1)
