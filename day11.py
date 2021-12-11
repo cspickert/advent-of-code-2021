@@ -3,24 +3,16 @@ from base import BaseSolution
 
 class Solution(BaseSolution):
     def load_data(self, input):
-        #         input = """\
-        # 5483143223
-        # 2745854711
-        # 5264556173
-        # 6141336146
-        # 6357385478
-        # 4167524645
-        # 2176841721
-        # 6882881134
-        # 4846848554
-        # 5283751526"""
         return [[int(c) for c in line] for line in input.splitlines()]
 
     def part1(self, data):
         return sum(self.step(data) for _ in range(100))
 
     def part2(self, data):
-        pass
+        total_count = len([item for row in data for item in row])
+        for step_num in range(1, 1000):
+            if self.step(data) == total_count:
+                return step_num
 
     def step(self, data):
         flashes = set()
@@ -47,8 +39,8 @@ class Solution(BaseSolution):
         return [
             (adj_row, adj_col)
             for adj_row in range(row - 1, row + 2)
-            for adj_col in range(col - 1, col + 2)
             if adj_row in range(len(data))
+            for adj_col in range(col - 1, col + 2)
             if adj_col in range(len(data[adj_row]))
             if (adj_row, adj_col) != (row, col)
         ]
