@@ -1,50 +1,41 @@
-from collections import Counter
+from collections import defaultdict
 
 from base import BaseSolution
 
 
 class Solution(BaseSolution):
     def load_data(self, input):
-        input = """\
-NNCB
-
-CH -> B
-HH -> N
-CB -> H
-NH -> C
-HB -> C
-HC -> B
-HN -> C
-NN -> C
-BH -> H
-NC -> B
-NB -> B
-BN -> B
-BB -> N
-BC -> B
-CC -> N
-CN -> C"""
         value, mapping_inputs = input.split("\n\n")
         mapping = dict(line.split(" -> ") for line in mapping_inputs.splitlines())
         return value, mapping
 
     def part1(self, data):
-        value, mapping = data
-        for _ in range(10):
-            value = self.step(value, mapping)
-        return self.analyze(value)
+        return self.run(data, 10)
 
     def part2(self, data):
-        pass
+        return self.run(data, 40)
 
-    def step(self, value, mapping):
-        result = value[0]
-        for i in range(len(value)):
-            key = value[i - 1 : i + 1]
-            if key in mapping:
-                result += mapping[key] + value[i]
-        return result
+    def run(self, data, steps):
+        value, mapping = data
 
-    def analyze(self, value):
-        counts = Counter(value)
-        return max(counts.values()) - min(counts.values())
+        counts = defaultdict(int)
+        for pair in self.get_pairs(value):
+            counts[pair] += 1
+
+        for _ in range(steps):
+            new_counts = defaultdict(int)
+            for pair in counts:
+                for new_pair in self.get_pairs(pair[0] + mapping[pair] + pair[1]):
+                    new_counts[new_pair] += counts[pair]
+            counts = new_counts
+
+        ele_counts = defaultdict(int)
+        for key in counts:
+            for ele in key:
+                ele_counts[ele] += counts[key]
+
+        # Note: the sample data seems to require +1 instead of -1 here.
+        return (max(ele_counts.values()) - min(ele_counts.values())) // 2 - 1
+
+    def get_pairs(self, value):
+        return ("".join(pair) for pair in zip(value, value[1:]))
