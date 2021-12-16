@@ -11,7 +11,27 @@ class Solution(BaseSolution):
         return self.explore(data)
 
     def part2(self, data):
-        pass
+        return self.explore(self.expand(data))
+
+    def expand(self, data):
+        tiles = [
+            [self.get_tile(data, tile_row, tile_col) for tile_col in range(5)]
+            for tile_row in range(5)
+        ]
+        return [
+            [value for tile in tile_row for value in tile[row]]
+            for tile_row in tiles
+            for row in range(len(data))
+        ]
+
+    def get_tile(self, data, tile_row, tile_col):
+        return [
+            [
+                (data[row][col] + tile_row + tile_col - 1) % 9 + 1
+                for col in range(len(data[row]))
+            ]
+            for row in range(len(data))
+        ]
 
     def explore(self, data):
         """Implementation based on:
