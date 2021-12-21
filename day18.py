@@ -1,4 +1,5 @@
 import functools
+import itertools
 import json
 import re
 
@@ -14,14 +15,15 @@ class Solution(BaseSolution):
         return self.magnitude(expr)
 
     def part2(self, data):
-        pass
+        return max(
+            self.magnitude(self.add(*pair)) for pair in itertools.combinations(data, 2)
+        )
 
     def add(self, value1, value2):
         return self.reduce(f"[{value1},{value2}]")
 
     def reduce(self, expr):
         while True:
-            print(expr)
             result = self.explode(expr)
             if result != expr:
                 expr = result
